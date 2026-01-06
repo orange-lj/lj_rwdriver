@@ -1,0 +1,4 @@
+#pragma once
+extern PHIDE_MEMORY_BUFFER pHideMemoryList;
+
+extern PHOOK_NOTIFY_BUFFER pProcessNotifyHookBuffer;

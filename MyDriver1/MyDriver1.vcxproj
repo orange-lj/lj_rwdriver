@@ -91,9 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DriverMain.c" />
+    <ClCompile Include="vmx.c" />
     <ClCompile Include="VMXTools.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="vmx.h" />
     <ClInclude Include="VMXDefine.h" />
     <ClInclude Include="VMXTools.h" />
   </ItemGroup>

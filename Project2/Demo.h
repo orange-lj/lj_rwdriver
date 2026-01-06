@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <stdio.h>
-
+#include <iostream>
 
 namespace Fun {
 
@@ -41,3 +41,12 @@ LONG WINAPI GSDrv_驱动消息(DWORD Msg, PVOID Data, DWORD DataSize);
 BOOL WINAPI GSDrv_进程提权();
 
 BOOL WINAPI GSDrv_安装驱动();
+
+/*
+函数: 离线注入
+参数: 进程名进程位数,注入类型(32,64),注入模式(0,1,2),保护内存(0,1,2,3),DLL数据,DLL数据长度
+返回: 0xE0000000 = 注入成功
+返回: 0xE0000001 = 注入失败
+返回: 0xE0000002 = 进程ID无效
+返回: 0x00000000 = 驱动未激活
+*/ LONG WINAPI GSDrv_2(LPCTSTR, ULONG32, ULONG32, BOOL, PVOID, ULONG32);

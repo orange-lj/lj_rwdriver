@@ -15,5 +15,10 @@
 #include "zhuru.h"
 #include "neicun.h"
 #include "meiju.h"
+#include "global.h"
+#include "jincheng.h"
 
 #include "exports.h"
+
+
+
