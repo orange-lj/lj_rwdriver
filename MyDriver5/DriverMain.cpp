@@ -30,13 +30,13 @@ auto GetPteTable(PBYTE pBuffer[]) -> NTSTATUS {
 			for (SIZE_T Index = 0;; Index++) {
 
 				if (PageDirectory[Index].u.Hard.PageFrameNumber == (UINT64)(PML4.QuadPart >> PAGE_SHIFT)) {
-
+					//存放PML4表地址
 					pBuffer[0] = (PBYTE)((UINT64)(Index << 39) | (UINT64)(0xFFFF'0000'0000'0000));
-
+					//存放PDPT表地址
 					pBuffer[1] = (PBYTE)((UINT64)(Index << 30) | (UINT64)(pBuffer[0]));
-
+					//存放PD表地址
 					pBuffer[2] = (PBYTE)((UINT64)(Index << 21) | (UINT64)(pBuffer[1]));
-
+					//存放PT表地址
 					pBuffer[3] = (PBYTE)((UINT64)(Index << 12) | (UINT64)(pBuffer[2]));
 
 					Result = STATUS_SUCCESS;

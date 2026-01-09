@@ -117,8 +117,10 @@
     <ClInclude Include="NativeStructs.h" />
     <ClInclude Include="driverhexin.h" />
     <ClInclude Include="neicun.h" />
+    <ClInclude Include="shellcode.h" />
     <ClInclude Include="tongxin.h" />
     <ClInclude Include="zhuru.h" />
+    <ClInclude Include="zidingyi.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

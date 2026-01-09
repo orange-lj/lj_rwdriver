@@ -9,6 +9,8 @@
 #include <ntstrsafe.h>
 #include <minwindef.h>
 
+#include "zidingyi.h"
+#include "shellcode.h"
 #include "NativeStructs.h"
 #include "NativeEnums.h"
 #include "tongxin.h"
@@ -17,6 +19,7 @@
 #include "meiju.h"
 #include "global.h"
 #include "jincheng.h"
+
 
 #include "exports.h"
 

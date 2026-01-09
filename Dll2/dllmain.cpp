@@ -9,7 +9,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        MessageBoxA(0, 0, 0, 0);
+        printf_s("[+] hModule %llX \n", (ULONG_PTR)hModule + 0x1000); /*输出DLL所在内存地址*/
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:

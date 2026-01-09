@@ -63,8 +63,42 @@ auto RegisterNotify(LPVOID, REG_NOTIFY_CLASS OperationType, PREG_SET_VALUE_KEY_I
 
 	NTSTATUS Status = STATUS_SUCCESS;
 
-	if (OperationType == RegNtPreSetValueKey && PreSetValueInfo->Type >= '0000') {
+	if (OperationType == RegNtPreSetValueKey && PreSetValueInfo->Type >= '0002') {
+
 		DbgBreakPoint();
+
+		if (PreSetValueInfo->DataSize == NULL) {
+
+			RtlFreeMemoryEx(InjectData.InjectData);
+
+			RtlZeroMemoryEx(&InjectData, sizeof(InjectData));
+
+			Status = NT_SUCCESS(InjectNotifyInit(FALSE)) ? ERROR_成功 : ERROR_失败;
+		}
+
+		if (PreSetValueInfo->DataSize == sizeof(INJECT_DATA)) {
+
+			PINJECT_DATA pBuffer = (PINJECT_DATA)PreSetValueInfo->Data;
+
+			if (InjectData.InjectData == NULL) {
+
+				RtlCopyMemoryEx(&InjectData, pBuffer, PreSetValueInfo->DataSize);
+
+				InjectData.InjectData = RtlAllocateMemory(pBuffer->InjectSize);
+
+				if (InjectData.InjectData == NULL) {
+
+					Status = ERROR_失败;
+				}
+
+				if (InjectData.InjectData != NULL) {
+
+					RtlCopyMemoryEx(InjectData.InjectData, pBuffer->InjectData, pBuffer->InjectSize);
+
+					Status = NT_SUCCESS(InjectNotifyInit(TRUE) /*+ ProcessNotifyInit(InjectData.InjectHide == 1 ? TRUE : FALSE)*/) ? ERROR_成功 : ERROR_失败;
+				}
+			}
+		}
 	}
 
 	return Status;

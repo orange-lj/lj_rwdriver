@@ -75,5 +75,11 @@
     <ClInclude Include="jincheng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="zidingyi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shellcode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
