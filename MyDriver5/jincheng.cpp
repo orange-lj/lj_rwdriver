@@ -4,13 +4,6 @@ PHIDE_MEMORY_BUFFER pHideMemoryList;
 
 PHOOK_NOTIFY_BUFFER pProcessNotifyHookBuffer;
 
-auto ProcessNotifyInit(ULONG Enable) -> NTSTATUS {
-
-	NTSTATUS Status = STATUS_UNSUCCESSFUL;
-
-	return Status;
-}
-
 auto AddMemoryItem(PEPROCESS pProcess, UINT64 Address, SIZE_T Size) -> NTSTATUS {
 
 	NTSTATUS Status = STATUS_UNSUCCESSFUL;
@@ -161,4 +154,90 @@ auto WIN1X_MiFindNodeOrParent(WIN1X_PMM_AVL_TABLE Table, ULONG_PTR StartingVpn, 
 		}
 	}
 	return Relust;
+}
+
+
+auto ProcessNotifyInit(ULONG Enable) -> NTSTATUS {
+
+	NTSTATUS Status = STATUS_UNSUCCESSFUL;
+
+	if (pProcessNotifyHookBuffer->Enable != Enable) {
+
+		if (pProcessNotifyHookBuffer->HookPoint == NULL) {
+
+			pProcessNotifyHookBuffer->HookPoint = GetSystemDrvJumpHook(ProcessNotify, pProcessNotifyHookBuffer);
+		}
+
+		if (pProcessNotifyHookBuffer->HookPoint != NULL) {
+
+			if (Enable == TRUE) {
+
+				RtlSuperCopyMemory(pProcessNotifyHookBuffer->HookPoint, pProcessNotifyHookBuffer->NewBytes, sizeof(pProcessNotifyHookBuffer->NewBytes));
+
+				Status = PsSetCreateProcessNotifyRoutine((PCREATE_PROCESS_NOTIFY_ROUTINE)(pProcessNotifyHookBuffer->HookPoint), FALSE);
+
+				if (NT_SUCCESS(Status)) {
+
+					pProcessNotifyHookBuffer->Enable = TRUE;
+				}
+			}
+
+			if (Enable != TRUE) {
+
+				if (pProcessNotifyHookBuffer->HookPoint != NULL) {
+
+					Status = PsSetCreateProcessNotifyRoutine((PCREATE_PROCESS_NOTIFY_ROUTINE)(pProcessNotifyHookBuffer->HookPoint), TRUE);
+
+					if (NT_SUCCESS(Status)) {
+
+						RtlSuperCopyMemory(pProcessNotifyHookBuffer->HookPoint, pProcessNotifyHookBuffer->OldBytes, sizeof(pProcessNotifyHookBuffer->OldBytes));
+
+						pProcessNotifyHookBuffer->Enable = FALSE;
+					}
+				}
+			}
+		}
+	}
+	if (pProcessNotifyHookBuffer->Enable == Enable) {
+
+		Status = STATUS_SUCCESS;
+	}
+
+	return Status;
+}
+
+auto ProcessNotify(HANDLE ParentId, HANDLE hProcessId, BOOLEAN Create) -> VOID {
+
+	if (!KeGetCurrentIrql()) {
+
+		if (!Create) {
+
+			DelMemoryItem(IoGetCurrentProcess());
+		}
+	}
+}
+
+
+auto DelMemoryItem(PEPROCESS pProcess) -> NTSTATUS {
+
+	NTSTATUS Status = STATUS_SUCCESS;
+
+	if (pHideMemoryList != NULL) {
+
+		for (SIZE_T i = NULL; i < (SIZE_T)(PAGE_SIZE / sizeof(HIDE_MEMORY_BUFFER)); i++) {
+
+			if (pHideMemoryList[i].pProcess == pProcess) {
+
+				VadShowMemory(&pHideMemoryList[i]);
+
+				RtlZeroMemoryEx(&pHideMemoryList[i], sizeof(pHideMemoryList[i]));
+			}
+		}
+	}
+	return Status;
+}
+
+auto VadShowMemory(PHIDE_MEMORY_BUFFER Buffer) -> NTSTATUS {
+
+	return ZwAllocateVirtualMemory(ZwCurrentProcess(), (LPVOID*)&Buffer->Address, 0, &Buffer->Size, MEM_RESERVE, PAGE_NOACCESS);
 }

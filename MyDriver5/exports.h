@@ -57,3 +57,7 @@ auto XorByte(LPBYTE, LPBYTE, SIZE_T) -> LPBYTE;
 auto ZwCreateThreadEx(HANDLE, LPVOID) -> NTSTATUS;
 
 auto SetPreviousMode(BYTE) -> BYTE;
+
+auto ZwProtectVirtualMemory(HANDLE, LPVOID) -> NTSTATUS;
+
+auto ZwCopyVirtualMemory(PEPROCESS, LPVOID, PEPROCESS, LPVOID, SIZE_T, KPROCESSOR_MODE) -> NTSTATUS;

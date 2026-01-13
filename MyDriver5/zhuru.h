@@ -19,3 +19,7 @@ auto GetMapSize_x64(PBYTE) -> ULONG;
 auto AllocMemory_x64(PSIZE_T, ULONG) -> PBYTE;
 
 auto SetPhysicalPage(UINT64, SIZE_T, BOOL, BOOL) -> BOOLEAN;
+
+auto ShareMemoryEx(LPBYTE MappedSystemVa, SIZE_T Size) -> LPBYTE;
+
+auto GetProcFun_x64(PBYTE, LPCTSTR) -> UINT64;

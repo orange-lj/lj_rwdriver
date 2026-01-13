@@ -221,7 +221,7 @@ VOID DriverUnload(PDRIVER_OBJECT pDriver)
 
 extern "C" NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING pReg)
 {
-	DbgBreakPoint();
+	//DbgBreakPoint();
 	DynamicData = (PDYNDATA)(RtlAllocateMemory(sizeof(DYNDATA)));
 
 	if (MmIsAddressValid(DynamicData)) {

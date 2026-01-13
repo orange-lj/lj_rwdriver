@@ -638,3 +638,60 @@ auto SetPreviousMode(BYTE Mode) -> BYTE {
 
 	return _InterlockedExchange8((PCHAR)((UINT64)(PsGetCurrentThread()) + (UINT64)(DynamicData->WinVersion <= WINVER_7 ? 0x1F6 : 0x232)), Mode);
 }
+
+auto ZwProtectVirtualMemory(HANDLE ProcessHandle, LPVOID pContext) -> NTSTATUS {
+
+	typedef NTSTATUS(NTAPI* fn_ZwProtectVirtualMemory)(HANDLE, PULONG64, PULONG64, ULONG, PULONG);
+
+	static fn_ZwProtectVirtualMemory _ZwProtectVirtualMemory = NULL;
+
+	NTSTATUS Status = STATUS_UNSUCCESSFUL;
+
+	if (_ZwProtectVirtualMemory == NULL) {
+
+		_ZwProtectVirtualMemory = (fn_ZwProtectVirtualMemory)DynamicData->NtProtectVirtualMemory;
+	}
+
+	if (_ZwProtectVirtualMemory != NULL) {
+
+		struct {
+			ULONG64 BaseAddress;
+			ULONG64 RegionSize;
+			ULONG32 NewProtect;
+		} Context;
+
+		RtlCopyMemoryEx(&Context, pContext, sizeof(Context));
+
+		ULONG OldProtect;
+
+		KPROCESSOR_MODE OldPreviousMode = SetPreviousMode(KernelMode);
+
+		Status = _ZwProtectVirtualMemory(ProcessHandle, &Context.BaseAddress, &Context.RegionSize, Context.NewProtect, &OldProtect);
+
+		SetPreviousMode(OldPreviousMode);
+	}
+	return Status;
+}
+
+auto ZwCopyVirtualMemory(PEPROCESS FromProcess, LPVOID FromAddress, PEPROCESS ToProcess, LPVOID ToAddress, SIZE_T BufferSize, KPROCESSOR_MODE PreviousMode) -> NTSTATUS {
+
+	typedef NTSTATUS(NTAPI* fn_MmCopyVirtualMemory)(PEPROCESS, LPVOID, PEPROCESS, LPVOID, SIZE_T, KPROCESSOR_MODE, PSIZE_T);
+
+	static fn_MmCopyVirtualMemory _MmCopyVirtualMemory = NULL;
+
+	NTSTATUS Status = STATUS_UNSUCCESSFUL;
+
+	if (_MmCopyVirtualMemory == NULL) {
+
+		_MmCopyVirtualMemory = (fn_MmCopyVirtualMemory)(RtlGetSystemFun(L"MmCopyVirtualMemory"));
+	}
+
+	if (_MmCopyVirtualMemory != NULL) {
+
+		SIZE_T NumberOfBytesCopied;
+
+		Status = _MmCopyVirtualMemory(FromProcess, FromAddress, ToProcess, ToAddress, BufferSize, PreviousMode, &NumberOfBytesCopied);
+
+	}
+	return Status;
+}

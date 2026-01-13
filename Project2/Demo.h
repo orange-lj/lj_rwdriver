@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
+#include <vector>
+#include <sstream>
 
 namespace Fun {
 
@@ -51,3 +53,13 @@ BOOL WINAPI GSDrv_安装驱动();
 返回: 0xE0000002 = 进程ID无效
 返回: 0x00000000 = 驱动未激活
 */ LONG WINAPI GSDrv_2(LPCTSTR, ULONG32, ULONG32, BOOL, PVOID, ULONG32);
+
+
+/*
+函数: 读写内存
+参数: 进程ID,目标地址,数据缓冲区指针,数据缓冲区大小,读写类型[0=读内存;1=写内存;2=强写内存]
+返回: 0xE0000000 = 操作成功
+返回: 0xE0000001 = 操作失败
+返回: 0xE0000002 = 无效进程
+返回: 0x00000000 = 驱动未激活
+*/ LONG WINAPI GSDrv_6(ULONG32, ULONG64, PVOID, ULONG, ULONG);
